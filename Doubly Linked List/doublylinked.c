@@ -1,161 +1,351 @@
-#include "stdio.h"
-#include "conio.h"
-#include "iostream.h"
-using namespace std;
-int insertdata(int x);
-void display();
-void deleteint(int x);
-int searchint(int x);
-
-int compare_fn(int a,int b)
-{
-    //Write the compare function for the variables 'a' and 'b' and return the value
-}
-
-int compare_no=1;
-
+#include <stdio.h>
+#include <stdlib.h>
+ 
 struct node
 {
-	int data;
-	node *prev;
-	node *next;
-};
-
-//A missing line here which initialises the top condition.
-
-int main()
+    struct node *prev;
+    int n;
+    struct node *next;
+}*h,*temp,*temp1,*temp2,*temp4;
+ 
+void insert1();
+void insert2();
+void insert3();
+void traversebeg();
+void traverseend(int);
+void sort();
+void search();
+void update();
+void delete();
+ 
+int count = 0;
+ 
+void main()
 {
-    int ch,d,y;
-    char ans='y';
-    while(ans=='y')
+    int ch;
+ 
+    h = NULL;
+    temp = temp1 = NULL;
+ 
+    printf("\n 1 - Insert at beginning");
+    printf("\n 2 - Insert at end");
+    printf("\n 3 - Insert at position i");
+    printf("\n 4 - Delete at i");
+    printf("\n 5 - Display from beginning");
+    printf("\n 6 - Display from end");
+    printf("\n 7 - Search for element");
+    printf("\n 8 - Sort the list");
+    printf("\n 9 - Update an element");
+    printf("\n 10 - Exit");
+ 
+    while (1)
     {
-        cout<<"\n\t 1.Insert        2. Delete     3.EXIT\nEnter Choice : ";
-        cin>>ch;
-        if(ch==1)
+        printf("\n Enter choice : ");
+        scanf("%d", &ch);
+        switch (ch)
         {
-            cout<<"Enter An Element To be inserted : ";
-            cin>>d;
-            d=insertdata(d);
-            display();
+        case 1:
+            insert1();
+            break;
+        case 2:
+            insert2();
+            break;
+        case 3:
+            insert3();
+            break;
+        case 4:
+            delete();
+            break;
+        case 5:
+            traversebeg();
+            break;
+        case 6:
+            temp2 = h;
+            if (temp2 == NULL)
+                printf("\n Error : List empty to display ");
+            else
+            {
+                printf("\n Reverse order of linked list is : ");
+                traverseend(temp2->n);
+            }
+            break;
+        case 7:
+            search();
+            break;
+        case 8:
+            sort();
+            break;
+        case 9:
+            update();
+            break;
+        case 10:
+            exit(0);
+        default:
+            printf("\n Wrong choice menu");
         }
-        else if(ch==2)
+    }
+}
+ 
+/* TO create an empty node */
+void create()
+{
+    int data;
+ 
+    temp =(struct node *)malloc(1*sizeof(struct node));
+    temp->prev = NULL;
+    temp->next = NULL;
+    printf("\n Enter value to node : ");
+    scanf("%d", &data);
+    temp->n = data;
+    count++;
+}
+ 
+/*  TO insert at beginning */
+void insert1()
+{
+    if (h == NULL)
+    {
+        create();
+        h = temp;
+        temp1 = h;
+    }
+    else
+    {
+        create();
+        temp->next = h;
+        h->prev = temp;
+        h = temp;
+    }
+}
+ 
+/* To insert at end */
+void insert2()
+{
+    if (h == NULL)
+    {
+        create();
+        h = temp;
+        temp1 = h;
+    }
+    else
+    {
+        create();
+        temp1->next = temp;
+        temp->prev = temp1;
+        temp1 = temp;
+    }
+}
+ 
+/* To insert at any position */
+void insert3()
+{
+    int pos, i = 2;
+ 
+    printf("\n Enter position to be inserted : ");
+    scanf("%d", &pos);
+    temp2 = h;
+ 
+    if ((pos < 1) || (pos >= count + 1))
+    {
+        printf("\n Position out of range to insert");
+        return;
+    }
+    if ((h == NULL) && (pos != 1))
+    {
+        printf("\n Empty list cannot insert other than 1st position");
+        return;
+    }
+    if ((h == NULL) && (pos == 1))
+    {
+        create();
+        h = temp;
+        temp1 = h;
+        return;
+    }
+    else
+    {
+        while (i < pos)
         {
-            cout<<"Enter Element To Be Deleted : ";
-            cin>>d;
-            deleteint(d);
-            display();
+            temp2 = temp2->next;
+            i++;
+        }
+        create();
+        temp->prev = temp2;
+        temp->next = temp2->next;
+        temp2->next->prev = temp;
+        temp2->next = temp;
+    }
+}
+ 
+/* To delete an element */
+void delete()
+{
+    int i = 1, pos;
+ 
+    printf("\n Enter position to be deleted : ");
+    scanf("%d", &pos);
+    temp2 = h;
+ 
+    if ((pos < 1) || (pos >= count + 1))
+    {
+        printf("\n Error : Position out of range to delete");
+        return;
+    }
+    if (h == NULL)
+    {
+        printf("\n Error : Empty list no elements to delete");
+        return;
+    }
+    else
+    {
+        while (i < pos)
+        {
+            temp2 = temp2->next;
+            i++;
+        }
+        if (i == 1)
+        {
+            if (temp2->next == NULL)
+            {
+                printf("Node deleted from list");
+                free(temp2);
+                temp2 = h = NULL;
+                return;
+            }
+        }
+        if (temp2->next == NULL)
+        {
+            temp2->prev->next = NULL;
+            free(temp2);
+            printf("Node deleted from list");
+            return;
+        }
+        temp2->next->prev = temp2->prev;
+        if (i != 1)
+            temp2->prev->next = temp2->next;    /* Might not need this statement if i == 1 check */
+        if (i == 1)
+            h = temp2->next;
+        printf("\n Node deleted");
+        free(temp2);
+    }
+    count--;
+}
+ 
+/* Traverse from beginning */
+void traversebeg()
+{
+    temp2 = h;
+ 
+    if (temp2 == NULL)
+    {
+        printf("List empty to display \n");
+        return;
+    }
+    printf("\n Linked list elements from begining : ");
+ 
+    while (temp2->next != NULL)
+    {
+        printf(" %d ", temp2->n);
+        temp2 = temp2->next;
+    }
+    printf(" %d ", temp2->n);
+}
+ 
+/* To traverse from end recursively */
+void traverseend(int i)
+{
+    if (temp2 != NULL)
+    {
+        i = temp2->n;
+        temp2 = temp2->next;
+        traverseend(i);
+        printf(" %d ", i);
+    }
+}
+ 
+/* To search for an element in the list */
+void search()
+{
+    int data, count = 0;
+    temp2 = h;
+ 
+    if (temp2 == NULL)
+    {
+        printf("\n Error : List empty to search for data");
+        return;
+    }
+    printf("\n Enter value to search : ");
+    scanf("%d", &data);
+    while (temp2 != NULL)
+    {
+        if (temp2->n == data)
+        {
+            printf("\n Data found in %d position",count + 1);
+            return;
         }
         else
-            return 0;
+             temp2 = temp2->next;
+            count++;
     }
-    return 0;
+    printf("\n Error : %d not found in list", data);
 }
-
-int searchint(int x)
+ 
+/* To update a node value in the list */
+void update()
 {
-	int count=0;
-	node *searchele=top;
-	while( searchele!=NULL)
-	{
-	    if(compare_fn(x,searchele->data)==compare_no)
-	    {
-		searchele=searchele->next;
-	    count+=1;
-	    }
-	    else
-		break;
-	}
-	return count;
-}
-int insertdata(int x)
-{
-    if(top==NULL)
+    int data, data1;
+ 
+    printf("\n Enter node data to be updated : ");
+    scanf("%d", &data);
+    printf("\n Enter new data : ");
+    scanf("%d", &data1);
+    temp2 = h;
+    if (temp2 == NULL)
     {
-        //Write a code for this particular condition where TOP == NULL
+        printf("\n Error : List empty no node to update");
+        return;
     }
-    else if(compare_fn(top->data ,x)==compare_no)
+    while (temp2 != NULL)
     {
-        node *n=new node;
-        n->data=x;
-        n->next=top;
-        n->prev=NULL;
-        top->prev=n;
-        top=n;
-    }
-    else
-    {
-	    int c=searchint(x);
-	    node *insertele=top;
-	    for(int i=0;i<c-1;i++)
-		insertele=insertele->next;
-	    node *n=new node;
-	    n->data=x;
-	    node *b=insertele->next;
-	    node *N =insertele;
-	    //Write 3 lines of code which links all the nodes in the linked list while inserting the data into the list.
-	    if(b!=NULL)
-		b->prev=n;
-    }
-}
-void display()
-{
-	cout<<"Element In The Linked List Are : ";
-	node *disp=top;
-	while(disp!=NULL)
-	{
-	    cout<<" "<<disp->data;
-	    if(_______)//write the particular condition for which the while condition needs to end
-	    {
-		break;
-	    }
-	    disp=disp->next;
-	}
-}
-
-void deleteint(int x)
-{
-    node *del=top;
-    if(del->data == x)
-    {
-        if(_______)// Write the condition for which TOP should be NULL while deleting a particular node in a doubly linked list.
+        if (temp2->n == data)
         {
-            top=NULL;
+ 
+            temp2->n = data1;
+            traversebeg();
             return;
         }
-        del->next->prev=NULL;
-        top=del->next;
+        else
+            temp2 = temp2->next;
     }
-    else
-    {
-        node *delsuc=del->next;
-        if(del==NULL)
-        {
-            cout<<"\nElement Not Found\n";
-            return;
-        }
-        if(delsuc==NULL)
-        {
-            cout<<"\nElement Not Found\n";
-            return;
-        }
-        while(delsuc->data != x)
-        {
-            del=del->next;
-            delsuc=delsuc->next;
-            if(del==NULL)
-	    {
-		cout<<"\nElement Not Found\n";
-		return;
-	    }
-            if(delsuc==NULL)
-	    {
-		cout<<"\nElement Not Found\n";
-		return;
-	    }
-        }
-        del->next=delsuc->next;
-        if(delsuc->next!=NULL)
-      		//Write the step for which a doubly linked list needs to be connected after deleting an element from the list.			
-    }
+ 
+    printf("\n Error : %d not found in list to update", data);
 }
-
+ 
+/* To sort the linked list */
+void sort()
+{
+    int i, j, x;
+ 
+    temp2 = h;
+    temp4 = h;
+ 
+    if (temp2 == NULL)
+    {
+        printf("\n List empty to sort");
+        return;
+    }
+ 
+    for (temp2 = h; temp2 != NULL; temp2 = temp2->next)
+    {
+        for (temp4 = temp2->next; temp4 != NULL; temp4 = temp4->next)
+        {
+            if (temp2->n > temp4->n)
+            {
+                x = temp2->n;
+                temp2->n = temp4->n;
+                temp4->n = x;
+            }
+        }
+    }
+    traversebeg();
+}
