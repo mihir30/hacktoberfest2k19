@@ -10,9 +10,11 @@ Example: given list -> [1,2,3,4,5]
 '''
 
 nums = [3, 5, 2, 9, 101, 333, 4]
-
 while len(nums):
-    for i in range(len(nums)):
-        if i%2==0:
-            del nums[i]
+    c=0
+    for i in nums:
+        if(c%2==0):
+            nums.remove(i)
+            c+=1
+        c+=1
     print(nums)
