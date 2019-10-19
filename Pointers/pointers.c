@@ -25,6 +25,6 @@ int main()
         printf("please try again\n");
     }
     
-    printf("the value of ptr3 is %d\n",**ptr3);
+    printf("the value of ptr3 is %d\n",ptr3);
     return 0;
 }
